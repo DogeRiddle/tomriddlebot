@@ -1,0 +1,608 @@
+#-----------------------------------#
+# TomRiddleBot | Jahus | 2014-09-03 #
+#-----------------------------------#--------------------------
+# Change log
+# * 2014-09-03 :
+#     (1.0.0)    - first code
+# * 2014-09-07 :
+#     (1.1.0)    - added TomRiddleBot's commands
+#     (1.2.0)    - changed the help structure
+#     (1.2.1)    - corrections mineures
+#     (1.3.1)    - ajouté !riddle et !solve
+#     (1.3.2)    - added context theory to riddle
+#     (1.3.3)    - stripped the commands args string
+#--------------------------------------------------------------
+#
+# MODULE INFORMATION
+__module_name__ = "TomRiddleBot"
+__module_version__ = "1.6.0"
+__module_description__ = "%s by Jahus" % __module_name__
+#
+#--------------------------------------------------------------
+# HEAD
+#--------------------------------------------------------------
+import hexchat # HexChat IRC client interface
+import requests # API requests
+import random # such randomness
+import xml.etree.ElementTree as xET # XML library
+import time # Time What Is Time, a song from Blind Guardian
+#
+#--------------------------------------------------------------
+# VARIABLES
+#--------------------------------------------------------------
+balance = {"doge" : "0"}
+message_bal = [0]
+message_bal_chan = "Jahus"
+timer_first_timeout = 120
+timer_timeout = 600
+riddle_timeout = 20
+riddle_ = ""
+riddle_last_time = 0
+riddle_context = None
+#
+#--------------------------------------------------------------
+# HELP TEXT
+#--------------------------------------------------------------
+about = "%s version %s by Jahus for TomRiddle." % (__module_name__, __module_version__)
+head_help = {
+        "about": {
+                "descr": [
+                        "> !about",
+                        ("  \ %s" % about)
+                        ]
+                },
+        "help": {
+                "descr": [
+                        "> @help [command|all]",
+                        "  |- help: Lists all the commands supported by the bot.",
+                        "  |- help all: Returns help on all commands (could be spamy).",
+                        "  \- help <command>: Returns help on the given command."
+                        ]
+                },
+        "trbotbal": {
+                "descr": [
+                        "> !trbotbal",
+                        "  \- returns the balance of the bot."
+                        ]
+                },
+        "riddle": {
+                "descr": [
+                        "> !riddle",
+                        ("  |- Gets a riddle to solve (you need to wait %.0fs between two riddles)." % riddle_timeout),
+                        "  \- Use !solve to get the solution (you need to wait %fs before asking for it)."
+                        ]
+                },
+        "solve": {
+                "descr": [
+                        "> !solve",
+                        ("  \- Gives the solution of the last riddle (you need to wait %.0fs before asking for it." % riddle_timeout)
+                        ]
+                }
+        }
+#
+#--------------------------------------------------------------
+# CONSTANTS
+#--------------------------------------------------------------
+admins = ["TomRiddle", "Jahus"]
+sp_users = ["TomRiddle", "Jahus"]
+tip_exclude = ["pndtip", "doger", "dogexm", "halvening", "hardc0re", "chanserv"]
+triggers = {
+        "admins": "@",
+        "sp_users": "#",
+        "users": "!",
+        "api": "*",
+        "help": "@"
+        }
+sp_msg = {
+        "srs": {
+                "words": "SRS pls go",
+                "descr": ["Sorry, no help for srs"]
+                },
+        "unidan": {
+                "words": "upjackdaws to the left",
+                "descr": ["Sorry, no help for unidan"]
+                },
+        "spong": {
+                "words": "Spong is a heathen",
+                "descr": ["Sorry, no help for spong"]
+                },
+        "greatday": {
+                "words": "http://youtu.be/WRu_-9MBpd4",
+                "descr": ["Sorry, no help for greatday"]
+                },
+        "dick": {
+                "words": "http://mydickband.bandcamp.com/track/fields-of-dick",
+                "descr": ["Sorry, no help for dick"]
+                },
+        "shill": {
+                "words": "BipolarBear0 can't stop shilling for everyone. What a JIDF.",
+                "descr": ["Sorry, no help for shill"]
+                },
+        "sems": {
+                "words": "Sems bangs badgers",
+                "descr": ["Sorry, no help for sems"]
+                },
+        "emmawatson": {
+                "words": '"I don''t believe her parents were muggles, because that ass is Magical!" – lie4karma',
+                "descr": ["Sorry, I can't help you with EmmaWatson ;)"]
+                },
+ 
+        "sun": {
+                "words": "TO THE SUN!",
+                "descr": ["Sorry, no help for sun"]
+                },
+        "frusciante": {
+                "words": "http://maskettaman.bandcamp.com/track/youre-a-big-guy <-for youuuuu",
+                "descr": ["Sorry, no help for Bane"]
+                },
+        "bot": {
+                "words": "TomRiddleBot V 1.6 built by Jahus and TomRiddle for Hexchat ",
+                "descr": ["Sorry, no help for bot"]
+                },
+ 
+ 
+        }
+act_msg = {
+        "lick": {
+                "words": ["lick", "licks"],
+                "suppl": "'s pudding pop",
+                "reason": "He's scary!",
+                "descr": ["> !lick [opt <nick>]", "  \- Licks the user or someone who is present on the channel."]
+                },
+        "hug": {
+                "words": ["hug", "hugs"],
+                "suppl": "",
+                "reason": "He's thorny!",
+                "descr": ["> !hug [opt <nick>]", "  \- Hugs the user or someone who is present on the channel."]
+                },
+        "damn": {
+                "words": ["damn", "damns"],
+                "suppl": " to hell",
+                "reason": "He's too powerful!",
+                "descr": ["> !damn [opt <nick>]", "  \- Damns the user or someone who is present on the channel."]
+                },
+        "punch": {
+                "words": ["punch", "punches"],
+                "suppl": " in the pooper",
+                "reason": "I'm not strong enough!",
+                "descr": ["> !punch [opt <nick>]", "  \- Punches the user or someone who is present on the channel."]
+                },
+        "avadakedavra": {
+                "words": ["throw Avada Kedavra on", "throws Avada Kedavra on"],
+                "suppl": "",
+                "reason": "He's my Master!",
+                "descr": ["> !AvadaKedavra [opt <nick>]", "  \- Throws the Avada Kedavra spell on the user or someone who is present on the channel."]
+                },
+        "slap": {
+                "words": ["slap", "slaps"],
+                "suppl": "",
+                "reason": "No, I refuse! *sigh* such twisted mind user!",
+                "descr": ["> !slap [opt <nick>]", "  \- slaps the user or someone who is present on the channel."]
+                },
+        "handy": {
+                "words": ["give", "gives"],
+                "suppl": " a handy",
+                "reason": "He's already handy!",
+                "descr": ["> !handy [opt <nick>]", "  \- Gives the user or someone who is present on the channel a handy."]
+                }
+        }
+wrd_trig = {
+        "fuckwit": "TomRiddle is a fuckwit."
+        }
+cmd_help = [head_help, act_msg, sp_msg]
+#
+#--------------------------------------------------------------
+# IDENTIFYING
+#--------------------------------------------------------------
+#
+# MODULE LAUNCH MESSAGE
+for admin in admins:
+        hexchat.command("msg %s %s started" % (admin, __module_name__))
+#
+# IDENTIFICATION WITH FREENODE
+def ident():
+        current_nick = hexchat.get_info("nick")
+        if hexchat.nickcmp(current_nick, __module_name__) != 0:
+                hexchat.command("msg NickServ REGAIN %s" % (__module_name__))
+                hexchat.command("msg NickServ RECOVER %s" % (__module_name__))
+                hexchat.command("nick %s" % (__module_name__))
+                for admin in admins:
+                        hexchat.command("msg %s %s regained" % (admin, __module_name__))
+#
+ident()
+#
+#--------------------------------------------------------------
+# HOOKS
+#--------------------------------------------------------------
+#
+# Channel messsages
+def chan_trig(word, word_eol, userdata):
+        # Strip input word
+        for i in range(len(word)):
+                word[i] = hexchat.strip(word[i], -1, 3)
+        #
+        user = word[0]
+        trig = word[1][0]
+        # Splits the words to get command and args
+        my_cmd = (word[1][1:].strip()).split(' ')
+        # Hence:
+        #   my_cmd[0] : command
+        #   my_cmd[1:] : arguments
+        #
+        # Gets the current channel
+        current_channel = hexchat.get_info("channel")
+        #
+        # Used for auto_tip: auto_tip(user, current_channel, my_cmd)
+        #
+        # Sort the commands and verifies the users permissions
+        if (trig == triggers.get("admins")) and (user in admins):
+                admin_cmd(user, current_channel, my_cmd[0], my_cmd[1:])
+        if (trig == triggers.get("users")):
+                user_cmd(user, current_channel, my_cmd[0], my_cmd[1:])
+        #if (trig == triggers.get("api")):
+        #       api_cmd(user, current_channel, my_cmd[0], my_cmd[1:])
+        #if (trig == triggers.get("sp_users")) and (user in sp_users):
+        #       sp_cmd(user, current_channel, my_cmd[0], my_cmd[1:])
+        if (trig == triggers.get("help")) and (my_cmd[0].lower() == "help"):
+                # Help
+                help_(user, current_channel, my_cmd[0], my_cmd[1:])
+        for wrd in my_cmd:
+                if wrd.lower() in wrd_trig:
+                        hexchat.command("msg %s %s" % (current_channel, wrd_trig.get(wrd.lower())))
+        #
+        return hexchat.EAT_NONE
+# Hooks the function to "Channel Message" event
+hexchat.hook_print("Channel Message", chan_trig)
+#
+# Personal message
+def pm_trig(word, word_eol, userdata):
+        global balance
+        global message_bal
+       
+        # Strip the input word
+        for i in range(len(word)):
+                word[i] = hexchat.strip(word[i], -1, 3)
+        #
+        user = word[0]
+        msg = word[1]
+        trig = word[1][0]
+        my_cmd = (word[1][1:].strip()).split(' ')
+        # Hence:
+        #   my_cmd[0] : command
+        #   my_cmd[1:] : arguments
+        #
+        if (user.lower() == "doger") and ("balance is".lower() in msg.lower()):
+                bal_start_offset = msg.rfind("is") + len("is") + 2
+                if ("(" in msg):
+                        bal_end_offset = msg.rfind("(") - 3
+                else:
+                        bal_end_offset = len(msg)
+                msg_bal = msg[(bal_start_offset):(bal_end_offset)]
+                balance.update([("doge", msg_bal)])
+                if (message_bal[0] == 1):
+                        hexchat.command("msg %s my current Dogecoin balance is: '%s' DOGE" % (message_bal_chan, balance.get("doge")))
+                        message_bal[0] = 0
+        #
+        return hexchat.EAT_NONE
+# Hooks the function to "Private Message to Dialog" event
+hexchat.hook_print("Private Message to Dialog", pm_trig)
+#
+# Stores found bot's ip
+ip_dict = dict()
+def found_ip(word, word_eol, userdata):
+        # Strop the input word
+        for i in range(len(word)):
+                word[i] = hexchat.strip(word[i], -1, 3)
+        # gets the current context to know the server
+        current_context = hexchat.get_context()
+        server_str = current_context.get_info("server")
+        # splits the server string and gets the server name example: name.'freenode'.net
+        server_strs = server_str.split(".")
+        server_name = server_strs[1].lower()
+        ip_dict.update([(server_name, word[0])])
+# Hooks the function to the "Found IP" event
+hexchat.hook_print("Found IP", found_ip)
+#
+# Timer
+timer_ = None # Main timer
+timer_first = None # First timer to launch
+def timeout_(userdata):
+        global timer_first
+        # recover the original name if another is used
+        ident()
+        # checks the balance
+        # check_bal(__module_name__, "", "checkbal", [])
+        # stops the first timer
+        if timer_first is not None:
+                hexchat.unhook(timer_first)
+                timer_first = None
+        # hexchat.command("msg Jahus ping")
+        return 1 # keep going
+# Hooks the function to a timer
+timer_ = hexchat.hook_timer(timer_timeout*1000, timeout_)
+timer_first = hexchat.hook_timer(timer_first_timeout*1000, timeout_)
+#
+timer_riddle = None
+def timeout_riddle(userdata):
+        global timer_riddle
+        get_riddle_solution(__module_name__, "", "solve", [], 0, riddle_context)
+        timer_riddle = None
+#
+# Unload
+def unload_me(userdata):
+        for admin in admins:
+                hexchat.command("msg %s %s unloaded" % (admin, __module_name__))
+# Hooks the function to the unload event
+hexchat.hook_unload(unload_me)
+#
+#--------------------------------------------------------------
+# Hubs
+#--------------------------------------------------------------
+#
+def sp_cmd(user, chan, cmd, args):
+        # Informs the special users that a special command has been used
+        for sp_user in sp_users:
+                hexchat.command("msg %s Special command %s used by %s on %s with args %s" % (sp_user, cmd, user, chan, args))
+        # Get ip
+        if (cmd.lower() == "ip"):
+                get_ip(user, chan, cmd, args)
+#
+def user_cmd(user, chan, cmd, args):
+        current_context = hexchat.get_context()
+        # Lick
+        if (cmd.lower() in act_msg):
+                do_(user, chan, cmd, args, current_context, act_msg.get(cmd.lower()).get("words"), act_msg.get(cmd.lower()).get("suppl"), act_msg.get(cmd.lower()).get("reason"))
+        if (cmd.lower() in sp_msg):
+                msg_(user, chan, "msg", ("%s %s" % (chan, ((sp_msg.get(cmd.lower())).get("words")))).split(' '))
+        if (cmd.lower() == "about"):
+                hexchat.command("msg %s %s" % (chan, about))
+        if (cmd.lower() == "riddle"):
+                get_riddle(user, chan, cmd, args)
+        #if (cmd.lower() == "solve") and (current_context == riddle_context):
+        #       get_riddle_solution(user, chan, cmd, args, 0, riddle_context)
+#
+def admin_cmd(user, chan, cmd, args):
+        # /part
+        if (cmd.lower() == "part"):
+                part_(user, chan, cmd, args)
+        # /join
+        if (cmd.lower() == "join"):
+                join_(user, chan, cmd, args)
+        # /away
+        if (cmd.lower() == "away"):
+                away_(user, chan, cmd, args)
+        # /back
+        if (cmd.lower() == "back"):
+                back_(user, chan, cmd, args)
+        # /msg ARG0 ARG1:n
+        if (cmd.lower() == "msg"):
+                msg_(user, chan, cmd, args)
+        # /nick <nick>
+        if (cmd.lower() == "nick"):
+                nick_(user, chan, cmd, args)
+        # Check balance
+        if (cmd.lower() == "trbotbal"):
+                check_bal(user, chan, cmd, args)
+#
+#def api_cmd(user, chan, cmd, args):
+        #
+#
+#--------------------------------------------------------------
+# Functions
+#--------------------------------------------------------------
+#
+# Check dogecoin balance
+def check_bal(user, chan, cmd, args):
+        global message_bal
+        global message_bal_chan
+        check_doge = 1
+        if (len(args) > 1):
+                hexchat.command("msg %s Too many args for %s" % (user, cmd))
+        #if (len(args) == 1):
+        #       if (args[0] == "doge"): check_pnd = 0
+        #       if (args[0] == "pnd"): check_doge = 0
+        if (len(args) == 0):
+                check_doge = 1
+                #check_pnd = 1
+        if (check_doge == 1):
+                hexchat.command("msg Doger balance")
+                if (chan != ""):
+                        message_bal_chan = chan
+                        message_bal[0] = 1
+        #if (check_pnd == 1):
+        #       hexchat.command("msg pndtip balance")
+        #       if (chan != ""):
+        #               message_bal_chan = chan
+        #               message_bal[1] = 1
+#
+# Checks the balance at reload (or load if already connected with NickServ)
+check_bal(__module_name__, "", "checkbal", [])
+#
+# Get ip
+def get_ip(user, chan, cmd, args):
+        if (len(args) > 1):
+                hexchat.command("msg %s Too many args for %s command." % (user, cmd))
+        else:
+                server = "n/a"
+                if (len(args) == 1):
+                        server = args[0].lower()
+                if (len(args) == 0):
+                        # Gets the current context
+                        current_context = hexchat.get_context()
+                        server_str = current_context.get_info("server")
+                        server_strs = server_str.split(".")
+                        server = server_strs[1]
+                if (server == "n/a"):
+                        hexchat.command("msg %s There were an error processing the command %s on args %s." % (user, cmd, args))
+                else:
+                        if (server == "all"):
+                                hexchat.command("msg %s All ips stored in my memory:" % (user))
+                                for server in ip_dict:
+                                        hexchat.command("msg %s - %s used for %s" % (user, ip_dict.get(server), server))
+                        else:
+                                if (server in ip_dict):
+                                        server_ip = ip_dict.get(server)
+                                        hexchat.command("msg %s IP used to connect to %s is: %s" % (user, server, server_ip))
+                                else:
+                                        hexchat.command("msg %s No ip found for server %s in my memory." % (user, server))
+#
+# Help
+def help_(user, chan, cmd, args):
+        if (len(args) > 1):
+                hexchat.command("msg %s Too many args for %s command, %s." % (chan, cmd, user))
+        else:
+                if (len(args) == 0):
+                        hexchat.command("msg %s %s" % (user, about))
+                        hexchat.command("msg %s Here's a list of my commands, use the trigger %s on channels:" % (user, triggers.get("users")))
+                        # sending the list
+                        for cmd_group in cmd_help:
+                                cmd_names = cmd_group.keys()
+                                hexchat.command("msg %s %s" % (user, (', ').join(cmd_names)))
+                        # informing the channel and the user
+                        hexchat.command("msg %s I sent you a message with a list of my commands, %s." % (chan, user))
+                else:
+                        # searching for the command
+                        if (args[0].lower() == "all"):
+                                hexchat.command("msg %s %s" % (user, about))
+                                hexchat.command("msg %s Here's a list of my commands with their full description as you asked on %s:" % (user, chan))
+                                # sending the whole help text
+                                for cmd_group in cmd_help:
+                                        for cmd_name in cmd_group:
+                                                cmd_descr = (cmd_group.get(cmd_name)).get("descr")
+                                                for cmd_descr_line in cmd_descr:
+                                                        hexchat.command("msg %s %s" % (user, cmd_descr_line))
+                                # informing the user
+                                hexchat.command("msg %s I sent you a message with a list of my commands, %s." % (chan, user))
+                        else:
+                                found = 0
+                                for cmd_group in cmd_help:
+                                        if args[0].lower() in cmd_group:
+                                                found = 1
+                                                cmd_descr = (cmd_group.get(args[0].lower())).get("descr")
+                                if found == 1:
+                                        hexchat.command("msg %s Help for '%s' as asked by %s:" % (chan, args[0].lower(), user))
+                                        for cmd_descr_line in cmd_descr:
+                                                hexchat.command("msg %s %s" % (chan, cmd_descr_line))
+                                else:
+                                        hexchat.command("msg %s Sorry, %s, the command '%s' doesn't exist." % (chan, user, args[0]))
+#
+# me <act> <user> [suppl] [reason]
+def do_(user, chan, cmd, args, context, action, suppl, reason):
+        print("args: %s" % args)
+        if (len(args) == 0):
+                context.command("me %s %s%s." % (action[1], user, suppl))
+        if (len(args) > 0):
+                cc_users = context.get_list("users")
+                if (args[0].lower() == "ChanServ".lower()):
+                        if reason == "": reason == "scary"
+                        hexchat.command("msg %s Sorry, %s, I cannot %s %s%s. %s" % (chan, user, action[0], "ChanServ", suppl, reason))
+                else:
+                        found = 0
+                        for i in cc_users:
+                                if (i.nick.lower() == args[0].lower()):
+                                        context.command("me %s %s%s." % (action[1], i.nick, suppl))
+                                        found = 1
+                        if (found != 1):
+                                # To make the action on present users only
+                                #hexchat.command("msg %s Sorry, %s, I cannot %s %s. I can't find them here." % (chan, user, action[0], args[0]))
+                                context.command("me %s %s%s." % (action[1], ' '.join(args[0:]), suppl))
+#
+# Part
+def part_(user, chan, cmd, args):
+        current_chans = hexchat.get_list("channels")
+        if (len(args) not in [1,2]):
+                hexchat.command("msg %s Error: not enough or too many arguments for %s." % (user, cmd))
+        else:
+                for i in current_chans:
+                        if (i.channel.lower() == args[0].lower()):
+                                if (len(args) == 1):
+                                        hexchat.command("%s %s" % (cmd, i.channel))
+                                else:
+                                        hexchat.command("%s %s %s" % (cmd, i.channel, args[1]))
+#
+# /join
+def join_(user, chan, cmd, args):
+        if len(args) == 1:
+                hexchat.command("%s %s" % (cmd, args[0]))
+        else:
+                hexchat.command("msg %s Error: not enough or too many arguments for %s." % (user, cmd))
+#
+# /away
+def away_(user, chan, cmd, args):
+        if (len(args) == 0):
+                hexchat.command("%s" % (cmd))
+        else:
+                hexchat.command("%s %s" % (cmd, ' '.join(args[:])))
+#
+# /back
+def back_(user, chan, cmd, args):
+        hexchat.command("%s" % (cmd))
+#
+# /msg ARG0 ARG1
+def msg_(user, chan, cmd, args):
+        if (len(args) < 2):
+                hexchat.command("msg %s Error: not enough arguments to send a message.")
+        else:
+                hexchat.command("%s %s %s" % (cmd, args[0], ' '.join(args[1:])))
+#
+# /nick <nick>
+def nick_(user, chan, cmd, args):
+        if (len(args) is not 1):
+                hexchat.command("msg %s Error: Too many arguments for %s." % (user, cmd))
+        else:
+                hexchat.command("%s %s" % (cmd, args[0]))
+#
+def api_riddle(user, chan, cmd, args):
+        global riddle_timeout
+        global riddle_
+        global riddle_last_time
+        current_time = time.time()
+        if ((current_time - riddle_last_time) > riddle_timeout) or (riddle_ == ""):
+                #if (riddle_ != ""):
+                #       get_riddle_solution(user, chan, cmd, args, 1, riddle_context)
+                print("Getting a new riddle")
+                req = requests.get("http://www.randomriddles.com/")
+                riddle_page = req.text
+                end_offset_1 = riddle_page.rfind("Click for Solution")
+                riddle_page = riddle_page[:end_offset_1]
+                start_offset_1 = riddle_page.rfind("<i>")
+                riddle_page = riddle_page[start_offset_1 + len("<i>"):]
+                end_offset_2 = riddle_page.rfind("<a")
+                riddle = riddle_page[:end_offset_2]
+                #print("riddle: %s" % riddle)
+                start_offset_2 = riddle_page.rfind("('")
+                riddle_page = riddle_page[start_offset_2 + len("('"):]
+                end_offset_3 = riddle_page.rfind("')")
+                solution = riddle_page[:end_offset_3]
+                #print("solution: %s" % solution)
+                riddle_ = {"riddle": riddle, "solution": solution}
+                riddle_last_time = time.time()
+                return riddle_
+        else:
+                print("Using the old riddle.")
+                return riddle_
+#
+def get_riddle(user, chan, cmd, args):
+        global timer_riddle
+        global riddle_context
+        riddle = api_riddle(user, chan, cmd, args)
+        hexchat.command("msg %s The riddle is: %s" % (chan, riddle.get("riddle")))
+        riddle_context = hexchat.get_context()
+        if timer_riddle == None:
+                reading_time = int(len((riddle.get("riddle")).split(' '))/3)
+                timer_riddle = hexchat.hook_timer((riddle_timeout + reading_time)*1000, timeout_riddle)
+#
+def get_riddle_solution(user, chan, cmd, args, unsolved, context):
+        chan = context.get_info("channel")
+        if (riddle_ == ""):
+                context.command("msg %s No riddle to solve, %s. Use !riddle to get a new riddle." % (chan, user))
+        else:
+                current_time = time.time()
+                if ((current_time - riddle_last_time) < riddle_timeout):
+                        context.command("msg %s The old riddle I sat %.0fs ago has not been solved, %s. Please wait %.0fs before trying to know the answer." % (chan, (current_time - riddle_last_time), user, (riddle_timeout - (current_time - riddle_last_time))))
+                else:
+                        if (unsolved == 1):
+                                context.command("msg %s The old riddle has not been solved and timed out (> 60s). The solution was: %s" % (chan, riddle_.get("solution")))
+                        else:
+                                context.command("msg %s The solution for the last riddle is: %s" % (chan, riddle_.get("solution")))
+#
