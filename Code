@@ -1,5 +1,5 @@
 #-----------------------------------#
-# TomRiddleBot | Jahus | 2014-09-03 #
+# TomRiddleBot | dbrown | 2014-09-03 #
 #-----------------------------------#--------------------------
 # Change log
 # * 2014-09-03 :
@@ -16,7 +16,7 @@
 # MODULE INFORMATION
 __module_name__ = "TomRiddleBot"
 __module_version__ = "1.6.0"
-__module_description__ = "%s by Jahus" % __module_name__
+__module_description__ = "%s by dbrown" % __module_name__
 #
 #--------------------------------------------------------------
 # HEAD
@@ -43,7 +43,7 @@ riddle_context = None
 #--------------------------------------------------------------
 # HELP TEXT
 #--------------------------------------------------------------
-about = "%s version %s by Jahus for TomRiddle." % (__module_name__, __module_version__)
+about = "%s version %s by dbrown for TomRiddle." % (__module_name__, __module_version__)
 head_help = {
         "about": {
                 "descr": [
@@ -136,7 +136,7 @@ sp_msg = {
                 "descr": ["Sorry, no help for Bane"]
                 },
         "bot": {
-                "words": "TomRiddleBot V 1.6 built by Jahus and TomRiddle for Hexchat ",
+                "words": "TomRiddleBot V 1.6 built by dbrown and TomRiddle for Hexchat ",
                 "descr": ["Sorry, no help for bot"]
                 },
  
@@ -316,7 +316,7 @@ def timeout_(userdata):
         if timer_first is not None:
                 hexchat.unhook(timer_first)
                 timer_first = None
-        # hexchat.command("msg Jahus ping")
+        # hexchat.command("msg dbrown ping")
         return 1 # keep going
 # Hooks the function to a timer
 timer_ = hexchat.hook_timer(timer_timeout*1000, timeout_)
