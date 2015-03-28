@@ -32,7 +32,7 @@ import time # Time What Is Time, a song from Blind Guardian
 #--------------------------------------------------------------
 balance = {"doge" : "0"}
 message_bal = [0]
-message_bal_chan = "Jahus"
+message_bal_chan = "dbrown"
 timer_first_timeout = 120
 timer_timeout = 600
 riddle_timeout = 20
@@ -83,8 +83,8 @@ head_help = {
 #--------------------------------------------------------------
 # CONSTANTS
 #--------------------------------------------------------------
-admins = ["TomRiddle", "Jahus"]
-sp_users = ["TomRiddle", "Jahus"]
+admins = ["TomRiddle", "Buffy", "dbrown"]
+sp_users = ["TomRiddle", "Buffy", "dbrown"]
 tip_exclude = ["pndtip", "doger", "dogexm", "halvening", "hardc0re", "chanserv"]
 triggers = {
         "admins": "@",
