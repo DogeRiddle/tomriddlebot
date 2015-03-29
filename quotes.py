@@ -9,7 +9,7 @@ import hexchat
 TRIGGER  = "!"
 FILE_NAME = "quotes-%s.txt"
 
-CAN_EDIT_QUOTES = ["Uid45119@unaffiliated/herecomethedrums", "dbrown@104.236.218.170"
+CAN_EDIT_QUOTES = ["uid45119@gateway/web/irccloud.com/x-pkcomdjihcrstrvk", "dbrown@104.236.218.170"
 ]
 
 # Channels in this list are exempt from the quote script
