@@ -9,7 +9,7 @@ import hexchat
 TRIGGER  = "!"
 FILE_NAME = "quotes-%s.txt"
 
-CAN_EDIT_QUOTES = ["~TomRiddle@unaffiliated/herecomethedrums", "dbrown@104.236.218.170", "TomRiddle@drama/herecomethedrums", "~TomRiddle@42.wallaby.way.sydney"
+CAN_EDIT_QUOTES = ["~TomRiddle@unaffiliated/herecomethedrums", "dbrown@104.236.218.170", "TomRiddle@drama/herecomethedrums", "~TomRiddle@Uid45119@unaffiliated/herecomethedrums"
 ]
 
 # Channels in this list are exempt from the quote script
