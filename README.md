@@ -4,7 +4,7 @@ tomriddlebot
 IRC bot
 
 
-This is an IRC bot built in Python by cr5315, Jahus, and TomRiddle.
+This is an IRC bot built in Python by cr5315, Jahus, dbrown, and TomRiddle.
 
 Will work as a standalone script to load up into hexchat. 
 
