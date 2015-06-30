@@ -1,5 +1,5 @@
 __module_name__ = "Quotes"
-__module_version__ = "0.1"
+__module_version__ = "0.2"
 __module_description__ = "Quotescript for HexChat by cr5315"
 
 import os
@@ -9,7 +9,7 @@ import hexchat
 TRIGGER  = "!"
 FILE_NAME = "quotes-%s.txt"
 
-CAN_EDIT_QUOTES = ["uid45119@gateway/web/irccloud.com/x-pkcomdjihcrstrvk", "dbrown@104.236.218.170"
+CAN_EDIT_QUOTES = ["uid45119@gateway/web/irccloud.com/x-pkcomdjihcrstrvk", "add new one"
 ]
 
 # Channels in this list are exempt from the quote script
