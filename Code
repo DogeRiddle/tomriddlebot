@@ -1,5 +1,5 @@
 #-----------------------------------#
-# TomRiddleBot | dbrown | 2014-09-03 #
+# TomRiddleBot | Buffy | 2014-09-03 #
 #-----------------------------------#--------------------------
 # Change log
 # * 2014-09-03 :
@@ -83,8 +83,8 @@ head_help = {
 #--------------------------------------------------------------
 # CONSTANTS
 #--------------------------------------------------------------
-admins = ["TomRiddle", "Buffy", "dbrown"]
-sp_users = ["TomRiddle", "Buffy", "dbrown"]
+admins = ["TomRiddle", "Buffy", "Herecomethedrums"]
+sp_users = ["TomRiddle", "Buffy", "Herecomethedrums"]
 tip_exclude = ["pndtip", "doger", "dogexm", "halvening", "hardc0re", "chanserv"]
 triggers = {
         "admins": "@",
@@ -136,7 +136,7 @@ sp_msg = {
                 "descr": ["Sorry, no help for Bane"]
                 },
         "bot": {
-                "words": "TomRiddleBot V 1.6 built by dbrown and TomRiddle for Hexchat ",
+                "words": "TomRiddleBot V 1.6 built by Jahus and TomRiddle for Hexchat ",
                 "descr": ["Sorry, no help for bot"]
                 },
  
