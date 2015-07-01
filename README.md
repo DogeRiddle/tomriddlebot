@@ -15,3 +15,7 @@ Commands are shown in the script.
 To use: type "!punch user" in any channel that the bot is in
 
 Bot will reply with a /me punches weaboo
+
+For the quote script, you MUST create a quotes.txt file on your PC. 
+
+Bot also requires Requests to be put into your lib folder
