@@ -85,7 +85,7 @@ head_help = {
 #--------------------------------------------------------------
 admins = ["TomRiddle", "Buffy", "Herecomethedrums"]
 sp_users = ["TomRiddle", "Buffy", "Herecomethedrums"]
-tip_exclude = ["pndtip", "doger", "dogexm", "halvening", "hardc0re", "chanserv"]
+tip_exclude = ["pndtip", "dooger", "dogexm", "halvening", "hardc0re", "chanserv"]
 triggers = {
         "admins": "@",
         "sp_users": "#",
@@ -127,19 +127,22 @@ sp_msg = {
                 "descr": ["Sorry, I can't help you with EmmaWatson ;)"]
                 },
  
-        "sun": {
-                "words": "TO THE SUN!",
-                "descr": ["Sorry, no help for sun"]
+        "ellenpao": {
+                "words": "STOP HARASSING ME!",
+                "descr": ["Sorry, no help for ellenpao"]
                 },
         "frusciante": {
-                "words": "http://maskettaman.bandcamp.com/track/youre-a-big-guy <-for youuuuu",
+                "words": "For You",
                 "descr": ["Sorry, no help for Bane"]
                 },
         "bot": {
                 "words": "TomRiddleBot V 1.6 built by Jahus and TomRiddle for Hexchat ",
                 "descr": ["Sorry, no help for bot"]
                 },
- 
+         "paradox": {
+                "words": "muhsoggyknees ",
+                "descr": ["Sorry, no help for paradox"]
+                },  
  
         }
 act_msg = {
@@ -271,7 +274,7 @@ def pm_trig(word, word_eol, userdata):
         #   my_cmd[0] : command
         #   my_cmd[1:] : arguments
         #
-        if (user.lower() == "doger") and ("balance is".lower() in msg.lower()):
+        if (user.lower() == "dooger") and ("balance is".lower() in msg.lower()):
                 bal_start_offset = msg.rfind("is") + len("is") + 2
                 if ("(" in msg):
                         bal_end_offset = msg.rfind("(") - 3
@@ -405,7 +408,7 @@ def check_bal(user, chan, cmd, args):
                 check_doge = 1
                 #check_pnd = 1
         if (check_doge == 1):
-                hexchat.command("msg Doger balance")
+                hexchat.command("msg Dogeer balance")
                 if (chan != ""):
                         message_bal_chan = chan
                         message_bal[0] = 1
@@ -606,4 +609,3 @@ def get_riddle_solution(user, chan, cmd, args, unsolved, context):
                         else:
                                 context.command("msg %s The solution for the last riddle is: %s" % (chan, riddle_.get("solution")))
 #
-
