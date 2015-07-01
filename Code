@@ -8,7 +8,7 @@
 #     (1.1.0)    - added TomRiddleBot's commands
 #     (1.2.0)    - changed the help structure
 #     (1.2.1)    - corrections mineures
-#     (1.3.1)    - ajouté !riddle et !solve
+#     (1.3.1)    - ajoutÃ© !riddle et !solve
 #     (1.3.2)    - added context theory to riddle
 #     (1.3.3)    - stripped the commands args string
 #--------------------------------------------------------------
@@ -16,7 +16,7 @@
 # MODULE INFORMATION
 __module_name__ = "TomRiddleBot"
 __module_version__ = "1.6.0"
-__module_description__ = "%s by dbrown" % __module_name__
+__module_description__ = "%s by Buffy" % __module_name__
 #
 #--------------------------------------------------------------
 # HEAD
@@ -32,7 +32,7 @@ import time # Time What Is Time, a song from Blind Guardian
 #--------------------------------------------------------------
 balance = {"doge" : "0"}
 message_bal = [0]
-message_bal_chan = "dbrown"
+message_bal_chan = "Buffy"
 timer_first_timeout = 120
 timer_timeout = 600
 riddle_timeout = 20
@@ -43,7 +43,7 @@ riddle_context = None
 #--------------------------------------------------------------
 # HELP TEXT
 #--------------------------------------------------------------
-about = "%s version %s by dbrown for TomRiddle." % (__module_name__, __module_version__)
+about = "%s version %s by Buffy for TomRiddle." % (__module_name__, __module_version__)
 head_help = {
         "about": {
                 "descr": [
@@ -123,7 +123,7 @@ sp_msg = {
                 "descr": ["Sorry, no help for sems"]
                 },
         "emmawatson": {
-                "words": '"I don''t believe her parents were muggles, because that ass is Magical!" – lie4karma',
+                "words": '"I don''t believe her parents were muggles, because that ass is Magical!" â€“ lie4karma',
                 "descr": ["Sorry, I can't help you with EmmaWatson ;)"]
                 },
  
@@ -145,7 +145,7 @@ sp_msg = {
 act_msg = {
         "lick": {
                 "words": ["lick", "licks"],
-                "suppl": "'s pudding pop",
+                "suppl": "'s popsicle",
                 "reason": "He's scary!",
                 "descr": ["> !lick [opt <nick>]", "  \- Licks the user or someone who is present on the channel."]
                 },
@@ -606,3 +606,4 @@ def get_riddle_solution(user, chan, cmd, args, unsolved, context):
                         else:
                                 context.command("msg %s The solution for the last riddle is: %s" % (chan, riddle_.get("solution")))
 #
+
