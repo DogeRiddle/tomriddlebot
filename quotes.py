@@ -7,6 +7,9 @@ import random
 import hexchat
 
 TRIGGER  = "!"
+# You could use a path here to place this in a folder you like e.g.
+# FILE_NAME = "c:\Users\Buffy\Desktop\Quotes\quotes-%s.txt";
+# Don't forget to ensure the folder exists first!
 FILE_NAME = "quotes-%s.txt"
 
 CAN_EDIT_QUOTES = ["uid45119@gateway/web/irccloud.com/x-pkcomdjihcrstrvk", "~Herecomet@unaffiliated/herecomethedrums"
