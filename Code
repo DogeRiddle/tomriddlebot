@@ -1,5 +1,5 @@
 #-----------------------------------#
-# TomRiddleBot | Buffy | 2014-09-03 #
+# TomRiddleBot | Buffy | 2015-07-02 #
 #-----------------------------------#--------------------------
 # Change log
 # * 2014-09-03 :
@@ -15,7 +15,7 @@
 #
 # MODULE INFORMATION
 __module_name__ = "TomRiddleBot"
-__module_version__ = "1.6.0"
+__module_version__ = "1.7.0"
 __module_description__ = "%s by Buffy" % __module_name__
 #
 #--------------------------------------------------------------
@@ -143,7 +143,19 @@ sp_msg = {
                 "words": "muhsoggyknees ",
                 "descr": ["Sorry, no help for paradox"]
                 },  
- 
+         "victoria": {
+                "words": "AVENGE ME ",
+                "descr": ["Sorry, no help for victoria"]
+                },
+         "bino": {
+                "words": "lmfao ",
+                "descr": ["Sorry, no help for bino"]
+                },  
+
+         "mmmango": {
+                "words": "I am John Mellencamp AMA ",
+                "descr": ["Sorry, no help for mmmango"]
+                }, 
         }
 act_msg = {
         "lick": {
