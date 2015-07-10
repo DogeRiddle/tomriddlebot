@@ -1,5 +1,5 @@
 #-----------------------------------#
-# TomRiddleBot | Buffy | 2015-07-02 #
+# TomRiddleBot | Buffy | 2015-07-10 #
 #-----------------------------------#--------------------------
 # Change log
 # * 2014-09-03 :
@@ -128,7 +128,7 @@ sp_msg = {
                 },
  
         "ellenpao": {
-                "words": "STOP HARASSING ME!",
+                "words": "DING DONG THE WICKED WITCH IS DEAD",
                 "descr": ["Sorry, no help for ellenpao"]
                 },
         "frusciante": {
@@ -148,7 +148,7 @@ sp_msg = {
                 "descr": ["Sorry, no help for victoria"]
                 },
          "bino": {
-                "words": "lmfao ",
+                "words": "<3 ",
                 "descr": ["Sorry, no help for bino"]
                 },  
 
@@ -178,7 +178,7 @@ act_msg = {
                 },
         "punch": {
                 "words": ["punch", "punches"],
-                "suppl": " in the pooper",
+                "suppl": " in the butt",
                 "reason": "I'm not strong enough!",
                 "descr": ["> !punch [opt <nick>]", "  \- Punches the user or someone who is present on the channel."]
                 },
