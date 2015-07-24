@@ -8,11 +8,11 @@ import hexchat
 
 TRIGGER  = "!"
 # You could use a path here to place this in a folder you like e.g.
-# FILE_NAME = "C:\Users\Jonathan\AppData\Roaming\HexChat\addons\quotes\quotes--%s.txt";
+# FILE_NAME = "C:\Users\BUFFY\AppData\Roaming\HexChat\addons\quotes\quotes--%s.txt";
 # Don't forget to ensure the folder exists first!
 FILE_NAME = "quotes-%s.txt"
 
-CAN_EDIT_QUOTES = ["uid45119@gateway/web/irccloud.com/x-pcqkzncptbglclcw", "~Herecomet@unaffiliated/herecomethedrums"
+CAN_EDIT_QUOTES = ["uid45119@gateway/web/irccloud.com/x-fevrqobgpfselwlt", "~Herecomet@unaffiliated/herecomethedrums"
 ]
 
 # Channels in this list are exempt from the quote script
