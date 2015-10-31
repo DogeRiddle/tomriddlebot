@@ -1,5 +1,5 @@
 #-----------------------------------#
-# SmokingManBot | Scully | 2015-09-14 #
+# SmokingManBot | Scully | 2015-10-30 #
 #-----------------------------------#--------------------------
 # Change log
 # * 2014-09-03 :
@@ -15,7 +15,7 @@
 #
 # MODULE INFORMATION
 __module_name__ = "SmokingManBot"
-__module_version__ = "1.8.0"
+__module_version__ = "1.9.0"
 __module_description__ = "%s by Scully" % __module_name__
 #
 #--------------------------------------------------------------
@@ -43,7 +43,7 @@ riddle_context = None
 #--------------------------------------------------------------
 # HELP TEXT
 #--------------------------------------------------------------
-about = "%s version %s by Buffy for TomRiddle." % (__module_name__, __module_version__)
+about = "%s version %s by Scully for TomRiddle." % (__module_name__, __module_version__)
 head_help = {
         "about": {
                 "descr": [
@@ -155,6 +155,12 @@ sp_msg = {
          "mmmango": {
                 "words": "I am John Mellencamp AMA ",
                 "descr": ["Sorry, no help for mmmango"]
+                },
+
+
+         "Gallowboob": {
+                "words": "All hail /u/doublemintdave79,slayer of the beast ",
+                "descr": ["Sorry, no help for Gallowboob"]
                 }, 
         }
 act_msg = {
